@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procurement Team - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🩺 Procurement Team Portal</h1>
+      <p>Verify donors for organ donation</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="doctor.html">⬅️ Prev: Doctor</a>
+        <a href="matching-organizer.html">➡️ Next: Matching Organizer</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Workflow Guide - Your Role:</h3>
+      <ol>
+        <li><span class="step-highlight">Task:</span> Verify donors added by doctors (adds them to donor waiting list)</li>
+        <li>After verification, the <strong>Matching Organizer</strong> can match with compatible patients</li>
+        <li>Then the <strong>Donor Surgeon</strong> performs the donation surgery</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="card">
+      <h2>Verify Donor</h2>
+      <div class="form-group">
+        <label>Donor ID</label>
+        <input type="number" id="verifyDonorId">
+      </div>
+      <button class="btn btn-success" id="btnVerifyDonor">Verify Donor</button>
+      <div id="donorInfo" style="margin-top:20px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnVerifyDonor').onclick = async () => {
+      const id = getNum('verifyDonorId');
+      if (!id) return log('Enter donor ID', 'error');
+      
+      // Check if donor exists
+      const donor = await callView('donors', [id]);
+      if (!donor || donor.id == 0) {
+        log(`⚠ Donor ${id} not found! Make sure donor was added by doctor first.`, 'error');
+        return;
+      }
+      
+      // Check if already verified
+      if (donor.verified) {
+        log(`⚠ Donor ${id} already verified!`, 'error');
+        displayDonor(donor, 'donorInfo');
+        alert(`Donor ${id} was already verified and is in the waiting list.`);
+        return;
+      }
+      
+      const result = await sendTransaction('verifyDonor', [id]);
+      
+      if (result) {
+        log(`✅ Donor ${id} verified successfully!`, 'success');
+        log(`📋 Donor ${id} added to donor waiting list`, 'info');
+        
+        // Show updated donor info
+        setTimeout(async () => {
+          const updatedDonor = await callView('donors', [id]);
+          if (updatedDonor && updatedDonor.id != 0) {
+            displayDonor(updatedDonor, 'donorInfo');
+          }
+        }, 1000);
+      }
+    };
+  </script>
+</body>
+</html>

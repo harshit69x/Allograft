@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allograft Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin-bottom: 40px;
+      border-radius: 12px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: white;
+    }
+    .hero p {
+      font-size: 20px;
+      opacity: 0.95;
+    }
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    .role-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .role-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border-color: var(--primary);
+    }
+    .role-card h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+    .role-card p {
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+    .role-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>🏥 Allograft Management System</h1>
+      <p>Blockchain-Based Organ Donation Management & Tracking</p>
+      <p style="font-size:16px; margin-top:15px;">TransChain Implementation - Algorithms 1-6</p>
+      <a href="workflow-guide.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: white; color: #667eea; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+        📖 View Complete Workflow Guide
+      </a>
+    </div>
+
+    <div class="card">
+      <h2>Select Your Role</h2>
+      <p>Choose the portal based on your role in the organ donation process:</p>
+      
+      <div class="role-grid">
+        <div class="role-card" onclick="location.href='admin.html'">
+          <div class="role-icon">🔐</div>
+          <h3>Admin</h3>
+          <p>Grant roles and manage system</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='doctor.html'">
+          <div class="role-icon">👨‍⚕️</div>
+          <h3>Doctor</h3>
+          <p>Add patients and donors</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='transplant-team.html'">
+          <div class="role-icon">🏥</div>
+          <h3>Transplant Team</h3>
+          <p>Verify patients & confirm receipt</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='procurement-team.html'">
+          <div class="role-icon">🩺</div>
+          <h3>Procurement Team</h3>
+          <p>Verify donors</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='matching-organizer.html'">
+          <div class="role-icon">🔗</div>
+          <h3>Matching Organizer</h3>
+          <p>Match patients with donors</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='donor-surgeon.html'">
+          <div class="role-icon">⚕️</div>
+          <h3>Donor Surgeon</h3>
+          <p>Perform donation surgery</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='transporter.html'">
+          <div class="role-icon">🚚</div>
+          <h3>Transporter</h3>
+          <p>Deliver organs</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+
+        <div class="role-card" onclick="location.href='transplant-surgeon.html'">
+          <div class="role-icon">🏥</div>
+          <h3>Transplant Surgeon</h3>
+          <p>Perform transplant surgery</p>
+          <button class="btn btn-primary">Access Portal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>About the System</h2>
+      <p>This blockchain-based organ donation management system implements the following algorithms:</p>
+      <ol>
+        <li><strong>Algorithm 1:</strong> Patient Addition - Doctors add patients to the system</li>
+        <li><strong>Algorithm 2:</strong> Donor Addition - Doctors register donors</li>
+        <li><strong>Algorithm 3:</strong> Matching Process - Organizers match compatible patients and donors</li>
+        <li><strong>Algorithm 4:</strong> Donation Surgery - Surgeons perform organ retrieval</li>
+        <li><strong>Algorithm 5:</strong> Delivery - Transporters deliver organs safely</li>
+        <li><strong>Algorithm 6:</strong> Transplant Surgery - Surgeons perform transplantation</li>
+      </ol>
+      <p style="margin-top:15px;"><strong>Technology Stack:</strong> Solidity ^0.8.0, Truffle, Ganache, Web3.js, OpenZeppelin AccessControl</p>
+    </div>
+  </div>
+</body>
+</html>

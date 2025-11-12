@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transplant Surgeon - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🏥 Transplant Surgeon Portal</h1>
+      <p>Algorithm 6: Perform transplant surgery (Final Step)</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="transplant-team.html">⬅️ Prev: Transplant Team</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Workflow Guide - Your Role:</h3>
+      <ol>
+        <li>Wait for organ to be delivered by <strong>Transporter</strong></li>
+        <li>Wait for <strong>Transplant Team</strong> to confirm organ receipt</li>
+        <li><span class="step-highlight">Task:</span> Perform the transplant surgery (FINAL STEP)</li>
+        <li>✅ After surgery, the complete workflow is finished!</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="card">
+      <h2>Perform Transplant Surgery</h2>
+      <div class="form-group">
+        <label>Patient ID</label>
+        <input type="number" id="patientId">
+      </div>
+      <button class="btn btn-success" id="btnTransplant">Complete Surgery</button>
+    </div>
+
+    <div class="card">
+      <h2>View Transplant Waiting List</h2>
+      <button class="btn btn-primary" id="btnViewList">Refresh List</button>
+      <div id="waitingList" style="margin-top:20px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>View Transplant Info</h2>
+      <div class="form-group">
+        <label>Patient ID</label>
+        <input type="number" id="checkPatientId">
+      </div>
+      <button class="btn btn-primary" id="btnCheckInfo">Check Info</button>
+      <div id="infoResult" style="margin-top:15px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnTransplant').onclick = async () => {
+      const patientId = getNum('patientId');
+      if (!patientId) return log('Enter patient ID', 'error');
+      
+      // Check if transplant already completed
+      const transplantInfo = await callView('transplantInfo', [patientId]);
+      if (transplantInfo && transplantInfo.completed) {
+        log(`⚠ Transplant already completed for Patient ${patientId}!`, 'error');
+        alert(`Transplant surgery was already performed for Patient ${patientId}. Each patient can only receive one transplant.`);
+        return;
+      }
+      
+      await sendTransaction('transplantSurgery', [patientId]);
+      
+      // Auto-refresh list after transplant
+      setTimeout(() => {
+        document.getElementById('btnViewList').click();
+      }, 2000);
+    };
+
+    document.getElementById('btnViewList').onclick = async () => {
+      log('Fetching transplant waiting list...', 'info');
+      
+      let list = [];
+      let i = 0;
+      
+      while (i < 100) { // Safety limit
+        try {
+          const patientId = await callView('transplantWaitingList', [i]);
+          
+          if (patientId === null || patientId === undefined) {
+            console.log('Reached end of array at index', i);
+            break;
+          }
+          
+          const id = typeof patientId === 'bigint' ? Number(patientId) : patientId;
+          
+          if (id === 0) {
+            console.log('Found zero at index', i);
+            break;
+          }
+          
+          // Check if transplant already completed
+          const transplantInfo = await callView('transplantInfo', [id]);
+          const isCompleted = transplantInfo && transplantInfo.completed;
+          
+          if (!isCompleted) {
+            // Only add to list if transplant NOT completed
+            list.push(id);
+          } else {
+            console.log(`Patient ${id} already had transplant - skipping`);
+          }
+          
+          i++;
+        } catch (e) {
+          console.log('Array end reached at index', i);
+          break;
+        }
+      }
+      
+      const listEl = document.getElementById('waitingList');
+      if (list.length === 0) {
+        listEl.innerHTML = '<p class="alert alert-success">✓ All transplants completed! No patients waiting.</p>';
+      } else {
+        let html = '<table class="table"><thead><tr><th>Patient ID</th><th>Details</th><th>Action</th></tr></thead><tbody>';
+        for (let patientId of list) {
+          const patient = await callView('patients', [patientId]);
+          if (patient && patient.id != 0) {
+            const age = typeof patient.age === 'bigint' ? Number(patient.age) : patient.age;
+            html += `<tr>
+              <td>${patientId}</td>
+              <td>Age: ${age}, Organ: ${patient.organNeeded}</td>
+              <td><button class="btn btn-success" onclick="performTransplant(${patientId})">Transplant</button></td>
+            </tr>`;
+          }
+        }
+        html += '</tbody></table>';
+        listEl.innerHTML = html;
+      }
+      
+      log(`List refreshed - Found ${list.length} patient(s) waiting for transplant`, 'success');
+    };
+
+    document.getElementById('btnCheckInfo').onclick = async () => {
+      const patientId = getNum('checkPatientId');
+      if (!patientId) return log('Enter patient ID', 'error');
+      
+      log(`Checking transplant info for Patient ${patientId}...`, 'info');
+      
+      const info = await callView('transplantInfo', [patientId]);
+      const resultEl = document.getElementById('infoResult');
+      
+      // Check if patient exists first
+      const patient = await callView('patients', [patientId]);
+      if (!patient || patient.id == 0) {
+        log(`⚠ Patient ${patientId} not found!`, 'error');
+        resultEl.innerHTML = '<div class="alert alert-error">❌ Patient not found. Check the ID and try again.</div>';
+        return;
+      }
+      
+      // Convert BigInt values
+      const id = typeof info.patientId === 'bigint' ? Number(info.patientId) : info.patientId;
+      const timestamp = typeof info.timestamp === 'bigint' ? Number(info.timestamp) : info.timestamp;
+      
+      if (info && id != 0) {
+        if (info.completed) {
+          const date = new Date(timestamp * 1000);
+          resultEl.innerHTML = `
+            <div class="card" style="background: #e8f5e9;">
+              <h3>✅ Transplant Completed</h3>
+              <p><strong>Patient ID:</strong> ${id}</p>
+              <p><strong>Status:</strong> <span class="badge badge-success">Completed ✓</span></p>
+              <p><strong>Completed On:</strong> ${date.toLocaleString()}</p>
+              <p class="alert alert-success">Transplant surgery was successfully performed!</p>
+            </div>
+          `;
+          log(`✅ Patient ${patientId} transplant completed on ${date.toLocaleString()}`, 'success');
+        } else {
+          resultEl.innerHTML = `
+            <div class="card" style="background: #fff3e0;">
+              <h3>⏳ Transplant Pending</h3>
+              <p><strong>Patient ID:</strong> ${id}</p>
+              <p><strong>Status:</strong> <span class="badge badge-warning">Not Completed</span></p>
+              <p class="alert alert-warning">⚠ Transplant surgery has not been performed yet for this patient.</p>
+            </div>
+          `;
+          log(`⏳ Patient ${patientId} waiting for transplant surgery`, 'info');
+        }
+      } else {
+        resultEl.innerHTML = `
+          <div class="alert alert-info">
+            <p>ℹ No transplant record found for Patient ${patientId}</p>
+            <p>This patient may not be matched yet or may not be in the transplant queue.</p>
+          </div>
+        `;
+        log(`ℹ No transplant info found for Patient ${patientId}`, 'info');
+      }
+    };
+
+    async function performTransplant(patientId) {
+      await sendTransaction('transplantSurgery', [patientId]);
+      document.getElementById('btnViewList').click();
+    }
+  </script>
+</body>
+</html>

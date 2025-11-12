@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🔐 Admin Panel</h1>
+      <p>Grant roles and manage the system</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="workflow-guide.html">📖 Workflow Guide</a>
+        <a href="doctor.html">Doctor</a>
+        <a href="transplant-team.html">Transplant Team</a>
+        <a href="procurement-team.html">Procurement Team</a>
+        <a href="matching-organizer.html">Matching Organizer</a>
+        <a href="donor-surgeon.html">Donor Surgeon</a>
+        <a href="transporter.html">Transporter</a>
+        <a href="transplant-surgeon.html">Transplant Surgeon</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Admin Setup Guide:</h3>
+      <ol>
+        <li><span class="step-highlight">Initial Setup:</span> Grant all 7 roles to your admin account (one-time setup)</li>
+        <li>In production, grant specific roles to different user addresses</li>
+        <li><strong>Roles:</strong> DOCTOR, TRANSPLANT_TEAM, PROCUREMENT_TEAM, MATCHING_ORGANIZER, DONOR_SURGEON, TRANSPORTER, TRANSPLANT_SURGEON</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Grant Roles</h2>
+        <div class="form-group">
+          <label>Account Address</label>
+          <input type="text" id="accountAddress" placeholder="0x...">
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="roleSelect">
+            <option value="DOCTOR">Doctor</option>
+            <option value="TRANSPLANT_TEAM">Transplant Team</option>
+            <option value="PROCUREMENT_TEAM">Procurement Team</option>
+            <option value="MATCHING_ORGANIZER">Matching Organizer</option>
+            <option value="DONOR_SURGEON">Donor Surgeon</option>
+            <option value="TRANSPORTER">Transporter</option>
+            <option value="TRANSPLANT_SURGEON">Transplant Surgeon</option>
+          </select>
+        </div>
+        <button class="btn btn-success" id="btnGrantRole">Grant Role</button>
+      </div>
+
+      <div class="card">
+        <h2>Check Role</h2>
+        <div class="form-group">
+          <label>Account Address</label>
+          <input type="text" id="checkAccount" placeholder="0x...">
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="checkRole">
+            <option value="DOCTOR">Doctor</option>
+            <option value="TRANSPLANT_TEAM">Transplant Team</option>
+            <option value="PROCUREMENT_TEAM">Procurement Team</option>
+            <option value="MATCHING_ORGANIZER">Matching Organizer</option>
+            <option value="DONOR_SURGEON">Donor Surgeon</option>
+            <option value="TRANSPORTER">Transporter</option>
+            <option value="TRANSPLANT_SURGEON">Transplant Surgeon</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnCheckRole">Check Role</button>
+        <div id="roleResult" style="margin-top:15px;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>View Waiting Lists</h2>
+      <button class="btn btn-primary" id="btnViewLists">Refresh Lists</button>
+      <div class="grid-2" style="margin-top:20px;">
+        <div>
+          <h3>Patient Waiting List</h3>
+          <div id="patientList"></div>
+        </div>
+        <div>
+          <h3>Donor Waiting List</h3>
+          <div id="donorList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>System Logs</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    const ROLES = {
+      DOCTOR: web3.utils.keccak256("DOCTOR_ROLE"),
+      TRANSPLANT_TEAM: web3.utils.keccak256("TRANSPLANT_TEAM_ROLE"),
+      PROCUREMENT_TEAM: web3.utils.keccak256("PROCUREMENT_TEAM_ROLE"),
+      MATCHING_ORGANIZER: web3.utils.keccak256("MATCHING_ORGANIZER_ROLE"),
+      DONOR_SURGEON: web3.utils.keccak256("DONOR_SURGEON_ROLE"),
+      TRANSPORTER: web3.utils.keccak256("TRANSPORTER_ROLE"),
+      TRANSPLANT_SURGEON: web3.utils.keccak256("TRANSPLANT_SURGEON_ROLE")
+    };
+
+    document.getElementById('btnGrantRole').onclick = async () => {
+      const account = getVal('accountAddress');
+      const role = getVal('roleSelect');
+      if (!account) return log('Please enter account address', 'error');
+      
+      await sendTransaction('grantRole', [ROLES[role], account]);
+    };
+
+    document.getElementById('btnCheckRole').onclick = async () => {
+      const account = getVal('checkAccount');
+      const role = getVal('checkRole');
+      if (!account) return log('Please enter account address', 'error');
+      
+      const hasRole = await callView('hasRole', [ROLES[role], account]);
+      const resultEl = document.getElementById('roleResult');
+      resultEl.innerHTML = hasRole 
+        ? '<span class="badge badge-success">Has Role ✓</span>'
+        : '<span class="badge badge-danger">No Role ✗</span>';
+    };
+
+    document.getElementById('btnViewLists').onclick = async () => {
+      const lists = await callView('getWaitingLists');
+      if (!lists) return;
+      
+      const patientList = document.getElementById('patientList');
+      const donorList = document.getElementById('donorList');
+      
+      if (lists[0].length === 0) {
+        patientList.innerHTML = '<p class="alert alert-info">No patients in waiting list</p>';
+      } else {
+        patientList.innerHTML = '<ul>' + lists[0].map(id => `<li>Patient ID: ${id}</li>`).join('') + '</ul>';
+      }
+      
+      if (lists[1].length === 0) {
+        donorList.innerHTML = '<p class="alert alert-info">No donors in waiting list</p>';
+      } else {
+        donorList.innerHTML = '<ul>' + lists[1].map(id => `<li>Donor ID: ${id}</li>`).join('') + '</ul>';
+      }
+      
+      log('Waiting lists refreshed', 'success');
+    };
+  </script>
+</body>
+</html>

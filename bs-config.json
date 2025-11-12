@@ -1,0 +1,9 @@
+{
+  "port": 3000,
+  "server": {
+    "baseDir": ["./frontend", "./build/contracts"]
+  },
+  "files": ["./frontend/**/*.{html,htm,css,js}", "./build/contracts/*.json"],
+  "open": true,
+  "startPath": "/index.html"
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donor Surgeon - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>⚕️ Donor Surgeon Portal</h1>
+      <p>Algorithm 4: Perform donation surgery to retrieve organs</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="matching-organizer.html">⬅️ Prev: Matching Organizer</a>
+        <a href="transporter.html">➡️ Next: Transporter</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Workflow Guide - Your Role:</h3>
+      <ol>
+        <li>Wait for <strong>Matching Organizer</strong> to match patient-donor pairs</li>
+        <li><span class="step-highlight">Task:</span> Perform donation surgery to retrieve the organ</li>
+        <li>After surgery, organ status changes to "Ready"</li>
+        <li>The <strong>Transporter</strong> then delivers the organ to the transplant center</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="card">
+      <h2>Perform Donation Surgery</h2>
+      <div class="form-group">
+        <label>Donor ID</label>
+        <input type="number" id="donorId">
+      </div>
+      <button class="btn btn-success" id="btnDonationSurgery">Complete Surgery</button>
+    </div>
+
+    <div class="card">
+      <h2>View Donation Surgery Waiting List</h2>
+      <button class="btn btn-primary" id="btnViewList">Refresh List</button>
+      <div id="waitingList" style="margin-top:20px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnDonationSurgery').onclick = async () => {
+      const donorId = getNum('donorId');
+      if (!donorId) return log('Enter donor ID', 'error');
+      
+      // Check if surgery already completed
+      const donationInfo = await callView('donationInfo', [donorId]);
+      if (donationInfo && donationInfo.completed) {
+        log(`⚠ Donation surgery already completed for Donor ${donorId}!`, 'error');
+        alert(`Donation surgery was already performed for Donor ${donorId}. Each donor can only have surgery once.`);
+        return;
+      }
+      
+      await sendTransaction('donationSurgery', [donorId]);
+      
+      // Auto-refresh list after surgery
+      setTimeout(() => {
+        document.getElementById('btnViewList').click();
+      }, 2000);
+    };
+
+    document.getElementById('btnViewList').onclick = async () => {
+      log('Fetching donation surgery waiting list...', 'info');
+      
+      // Get donation surgery waiting list length by checking array
+      let list = [];
+      let i = 0;
+      
+      while (i < 100) { // Safety limit
+        try {
+          const donorId = await callView('donationSurgeryWaitingList', [i]);
+          
+          // Check if we got a valid result
+          if (donorId === null || donorId === undefined) {
+            console.log('Reached end of array at index', i);
+            break;
+          }
+          
+          // Convert BigInt to Number
+          const id = typeof donorId === 'bigint' ? Number(donorId) : donorId;
+          
+          if (id === 0) {
+            console.log('Found zero at index', i, '- end of list');
+            break;
+          }
+          
+          // Check if surgery already completed
+          const donationInfo = await callView('donationInfo', [id]);
+          const isCompleted = donationInfo && donationInfo.completed;
+          
+          if (!isCompleted) {
+            // Only add to list if surgery NOT completed
+            list.push(id);
+          } else {
+            console.log(`Donor ${id} already had surgery - skipping`);
+          }
+          
+          i++;
+        } catch (e) {
+          console.log('Error at index', i, '- array end reached:', e.message);
+          break;
+        }
+      }
+      
+      const listEl = document.getElementById('waitingList');
+      if (list.length === 0) {
+        listEl.innerHTML = '<p class="alert alert-success">✓ All donation surgeries completed! No donors waiting.</p>';
+      } else {
+        let html = '<table class="table"><thead><tr><th>Donor ID</th><th>Action</th></tr></thead><tbody>';
+        for (let donorId of list) {
+          html += `<tr><td>${donorId}</td><td><button class="btn btn-success" onclick="performSurgery(${donorId})">Perform Surgery</button></td></tr>`;
+        }
+        html += '</tbody></table>';
+        listEl.innerHTML = html;
+      }
+      
+      log(`List refreshed - Found ${list.length} donor(s) waiting for surgery`, 'success');
+    };
+
+    async function performSurgery(donorId) {
+      await sendTransaction('donationSurgery', [donorId]);
+      document.getElementById('btnViewList').click();
+    }
+  </script>
+</body>
+</html>

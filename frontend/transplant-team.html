@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transplant Team - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🏥 Transplant Team Portal</h1>
+      <p>Verify patients & confirm organ receipt</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="doctor.html">⬅️ Prev: Doctor</a>
+        <a href="matching-organizer.html">View Matching</a>
+        <a href="transplant-surgeon.html">➡️ Next: Transplant Surgeon</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Workflow Guide - Your Role:</h3>
+      <ol>
+        <li><span class="step-highlight">Task 1:</span> Verify patients added by doctors (adds them to waiting list)</li>
+        <li>Wait for organ to be matched → surgery → delivery</li>
+        <li><span class="step-highlight">Task 2:</span> Confirm organ receipt when delivered</li>
+        <li>After confirmation, the <strong>Transplant Surgeon</strong> performs the transplant</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Verify Patient</h2>
+        <div class="form-group">
+          <label>Patient ID</label>
+          <input type="number" id="verifyPatientId">
+        </div>
+        <button class="btn btn-success" id="btnVerifyPatient">Verify Patient</button>
+        <div id="patientInfo" style="margin-top:20px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Confirm Organ Received</h2>
+        <div class="form-group">
+          <label>Organ ID</label>
+          <input type="number" id="organId">
+        </div>
+        <div class="form-group">
+          <label>Patient ID</label>
+          <input type="number" id="receivedPatientId">
+        </div>
+        <button class="btn btn-primary" id="btnConfirmReceived">Confirm Received</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnVerifyPatient').onclick = async () => {
+      const id = getNum('verifyPatientId');
+      if (!id) return log('Enter patient ID', 'error');
+      
+      // Check if patient exists
+      const patient = await callView('patients', [id]);
+      if (!patient || patient.id == 0) {
+        log(`⚠ Patient ${id} not found! Make sure patient was added by doctor first.`, 'error');
+        return;
+      }
+      
+      // Check if already verified
+      if (patient.verified) {
+        log(`⚠ Patient ${id} already verified!`, 'error');
+        displayPatient(patient, 'patientInfo');
+        alert(`Patient ${id} was already verified and is in the waiting list.`);
+        return;
+      }
+      
+      const result = await sendTransaction('verifyPatient', [id]);
+      
+      if (result) {
+        log(`✅ Patient ${id} verified successfully!`, 'success');
+        log(`📋 Patient ${id} added to patient waiting list`, 'info');
+        
+        // Show updated patient info
+        setTimeout(async () => {
+          const updatedPatient = await callView('patients', [id]);
+          if (updatedPatient && updatedPatient.id != 0) {
+            displayPatient(updatedPatient, 'patientInfo');
+          }
+        }, 1000);
+      }
+    };
+
+    document.getElementById('btnConfirmReceived').onclick = async () => {
+      const organId = getNum('organId');
+      const patientId = getNum('receivedPatientId');
+      if (!organId || !patientId) return log('Enter both IDs', 'error');
+      
+      // Check organ status before confirming
+      const organStatus = await callView('organStatus', [organId]);
+      if (!organStatus || !organStatus.status) {
+        log(`⚠ Organ ${organId} not found! Make sure organ was delivered first.`, 'error');
+        return;
+      }
+      
+      if (organStatus.status === 'Received') {
+        log(`⚠ Organ ${organId} already confirmed as received!`, 'error');
+        alert(`Organ ${organId} was already confirmed as received.`);
+        return;
+      }
+      
+      if (organStatus.status !== 'Delivered') {
+        log(`⚠ Organ ${organId} status is "${organStatus.status}". Must be "Delivered" before confirming receipt.`, 'error');
+        return;
+      }
+      
+      const result = await sendTransaction('confirmOrganReceived', [organId, patientId]);
+      
+      if (result) {
+        log(`✅ Organ ${organId} confirmed received for Patient ${patientId}!`, 'success');
+        log(`📋 Patient ${patientId} added to transplant waiting list`, 'info');
+        
+        // Show updated organ status
+        setTimeout(async () => {
+          const updatedStatus = await callView('organStatus', [organId]);
+          alert(`✅ Success!\n\nOrgan ${organId} confirmed received\nPatient ${patientId} added to transplant waiting list\nOrgan status: ${updatedStatus.status}\n\nNext step: Go to Transplant Surgeon portal to complete transplant surgery`);
+        }, 1000);
+      }
+    };
+  </script>
+</body>
+</html>

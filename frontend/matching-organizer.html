@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matching Organizer - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🔗 Matching Organizer Portal</h1>
+      <p>Algorithm 3: Match patients with compatible donors</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="procurement-team.html">⬅️ Prev: Procurement Team</a>
+        <a href="donor-surgeon.html">➡️ Next: Donor Surgeon</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="workflow-steps">
+      <h3>📋 Workflow Guide - Your Role:</h3>
+      <ol>
+        <li>Ensure patients are verified by <strong>Transplant Team</strong></li>
+        <li>Ensure donors are verified by <strong>Procurement Team</strong></li>
+        <li><span class="step-highlight">Task:</span> Match a patient with a compatible donor</li>
+        <li>After matching, the <strong>Donor Surgeon</strong> performs donation surgery</li>
+      </ol>
+    </div>
+
+    <div class="wallet-info">
+      <div>
+        <strong>Connected Account:</strong> <span id="walletAddress">Not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">Connect Wallet</button>
+    </div>
+
+    <div class="card">
+      <h2>Match Patient & Donor</h2>
+      <div class="form-group">
+        <label>Donor ID</label>
+        <input type="number" id="matchDonorId">
+      </div>
+      <div class="form-group">
+        <label>Min Age</label>
+        <input type="number" id="minAge" value="18">
+      </div>
+      <div class="form-group">
+        <label>Max Age</label>
+        <input type="number" id="maxAge" value="65">
+      </div>
+      <div class="form-group">
+        <label>Min BMI</label>
+        <input type="number" id="minBMI" value="18">
+      </div>
+      <div class="form-group">
+        <label>Max BMI</label>
+        <input type="number" id="maxBMI" value="35">
+      </div>
+      <button class="btn btn-success" id="btnMatch">Find Match</button>
+    </div>
+
+    <div class="card">
+      <h2>View Waiting Lists</h2>
+      <button class="btn btn-primary" id="btnViewLists">Refresh Lists</button>
+      <div class="grid-2" style="margin-top:20px;">
+        <div>
+          <h3>Patient Waiting List</h3>
+          <div id="patientList"></div>
+        </div>
+        <div>
+          <h3>Donor Waiting List</h3>
+          <div id="donorList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Activity Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnMatch').onclick = async () => {
+      const donorId = getNum('matchDonorId');
+      const minAge = getNum('minAge');
+      const maxAge = getNum('maxAge');
+      const minBMI = getNum('minBMI');
+      const maxBMI = getNum('maxBMI');
+      
+      if (!donorId) return log('Enter donor ID', 'error');
+      
+      // Debug: Check donor status before matching
+      const donor = await callView('donors', [donorId]);
+      console.log('Donor info:', donor);
+      
+      if (!donor || donor.id == 0) {
+        log('Donor not found! Make sure donor was added.', 'error');
+        return;
+      }
+      
+      if (!donor.verified) {
+        log('Donor not verified! Go to Procurement Team to verify donor first.', 'error');
+        return;
+      }
+      
+      log(`Donor ${donorId}: Age=${donor.age}, BMI=${donor.bmi}, Blood=${donor.bloodGroup}, Organ=${donor.organDonated}, Verified=${donor.verified}`, 'info');
+      
+      // Check waiting lists
+      const lists = await callView('getWaitingLists');
+      console.log('Waiting lists:', lists);
+      
+      if (!lists || lists[0].length === 0) {
+        log('No patients in waiting list! Make sure patient is verified.', 'error');
+        return;
+      }
+      
+      log(`Found ${lists[0].length} patient(s) and ${lists[1].length} donor(s) in waiting lists`, 'info');
+      
+      await sendTransaction('matchPatientDonor', [donorId, minAge, maxAge, minBMI, maxBMI]);
+    };
+
+    document.getElementById('btnViewLists').onclick = async () => {
+      const lists = await callView('getWaitingLists');
+      if (!lists) return;
+      
+      const patientList = document.getElementById('patientList');
+      const donorList = document.getElementById('donorList');
+      
+      if (lists[0].length === 0) {
+        patientList.innerHTML = '<p class="alert alert-info">No patients waiting</p>';
+      } else {
+        let html = '<table class="table"><thead><tr><th>ID</th><th>Details</th></tr></thead><tbody>';
+        for (let id of lists[0]) {
+          html += `<tr><td>${id}</td><td><button class="btn btn-primary" onclick="viewPatient(${id})">View</button></td></tr>`;
+        }
+        html += '</tbody></table>';
+        patientList.innerHTML = html;
+      }
+      
+      if (lists[1].length === 0) {
+        donorList.innerHTML = '<p class="alert alert-info">No donors waiting</p>';
+      } else {
+        let html = '<table class="table"><thead><tr><th>ID</th><th>Details</th></tr></thead><tbody>';
+        for (let id of lists[1]) {
+          html += `<tr><td>${id}</td><td><button class="btn btn-success" onclick="viewDonor(${id})">View</button></td></tr>`;
+        }
+        html += '</tbody></table>';
+        donorList.innerHTML = html;
+      }
+      
+      log('Lists refreshed', 'success');
+    };
+
+    async function viewPatient(id) {
+      const patient = await callView('patients', [id]);
+      alert(`Patient #${id}\nAge: ${patient.age}\nBMI: ${patient.bmi}\nBlood: ${patient.bloodGroup}\nOrgan: ${patient.organNeeded}`);
+    }
+
+    async function viewDonor(id) {
+      const donor = await callView('donors', [id]);
+      alert(`Donor #${id}\nAge: ${donor.age}\nBMI: ${donor.bmi}\nBlood: ${donor.bloodGroup}\nOrgan: ${donor.organDonated}`);
+    }
+  </script>
+</body>
+</html>

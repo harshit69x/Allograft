@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Workflow Guide - Allograft Management</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .workflow-diagram {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .workflow-step {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 5px solid var(--primary);
+      transition: all 0.3s;
+    }
+    .workflow-step:hover {
+      transform: translateX(10px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-content h3 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+    .step-content p {
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .step-portal {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    .step-portal:hover {
+      background: #1d4ed8;
+      transform: scale(1.05);
+    }
+    .arrow-down {
+      text-align: center;
+      font-size: 32px;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+    .example-box {
+      background: #fef3c7;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #f59e0b;
+    }
+    .example-box strong {
+      color: #92400e;
+    }
+    .complete-badge {
+      background: #16a34a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>📖 Complete Workflow Guide</h1>
+      <p>Step-by-step guide for the entire organ donation process</p>
+      <nav class="nav">
+        <a href="index.html" class="home">🏠 Home</a>
+        <a href="admin.html">Admin</a>
+        <a href="doctor.html">Start Workflow</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>🎯 Complete Organ Donation Workflow</h2>
+      <p>Follow these steps in order to complete a full organ donation and transplant process:</p>
+    </div>
+
+    <div class="workflow-diagram">
+      <!-- Step 0: Admin Setup -->
+      <div class="workflow-step" style="border-left-color: #dc2626;">
+        <div class="step-number" style="background: #dc2626;">0</div>
+        <div class="step-content">
+          <h3>🔐 Initial Setup (One-time)</h3>
+          <p><strong>Role:</strong> Admin</p>
+          <p><strong>Action:</strong> Grant all 7 roles to your account or specific roles to different users</p>
+          <div class="example-box">
+            <strong>Example:</strong> In Admin portal, enter your wallet address and grant all roles (DOCTOR, TRANSPLANT_TEAM, PROCUREMENT_TEAM, MATCHING_ORGANIZER, DONOR_SURGEON, TRANSPORTER, TRANSPLANT_SURGEON)
+          </div>
+          <a href="admin.html" class="step-portal">Go to Admin Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 1: Add Patient -->
+      <div class="workflow-step" style="border-left-color: #2563eb;">
+        <div class="step-number" style="background: #2563eb;">1</div>
+        <div class="step-content">
+          <h3>👤 Add Patient (Algorithm 1)</h3>
+          <p><strong>Role:</strong> Doctor</p>
+          <p><strong>Action:</strong> Register a patient who needs an organ transplant</p>
+          <div class="example-box">
+            <strong>Example:</strong> ID: 1, Age: 45, Organ: Heart
+          </div>
+          <a href="doctor.html" class="step-portal">Go to Doctor Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 2: Verify Patient -->
+      <div class="workflow-step" style="border-left-color: #16a34a;">
+        <div class="step-number" style="background: #16a34a;">2</div>
+        <div class="step-content">
+          <h3>✅ Verify Patient</h3>
+          <p><strong>Role:</strong> Transplant Team</p>
+          <p><strong>Action:</strong> Verify the patient and add to waiting list</p>
+          <div class="example-box">
+            <strong>Example:</strong> Enter Patient ID: 1, Click "Verify Patient"
+          </div>
+          <a href="transplant-team.html" class="step-portal">Go to Transplant Team Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 3: Add Donor -->
+      <div class="workflow-step" style="border-left-color: #2563eb;">
+        <div class="step-number" style="background: #2563eb;">3</div>
+        <div class="step-content">
+          <h3>🩸 Add Donor (Algorithm 2)</h3>
+          <p><strong>Role:</strong> Doctor</p>
+          <p><strong>Action:</strong> Register a donor who wants to donate an organ</p>
+          <div class="example-box">
+            <strong>Example:</strong> ID: 100, Age: 30, Organ: Heart, Blood Type: O+
+          </div>
+          <a href="doctor.html" class="step-portal">Go to Doctor Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 4: Verify Donor -->
+      <div class="workflow-step" style="border-left-color: #16a34a;">
+        <div class="step-number" style="background: #16a34a;">4</div>
+        <div class="step-content">
+          <h3>✅ Verify Donor</h3>
+          <p><strong>Role:</strong> Procurement Team</p>
+          <p><strong>Action:</strong> Verify the donor and add to donor waiting list</p>
+          <div class="example-box">
+            <strong>Example:</strong> Enter Donor ID: 100, Click "Verify Donor"
+          </div>
+          <a href="procurement-team.html" class="step-portal">Go to Procurement Team Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 5: Match -->
+      <div class="workflow-step" style="border-left-color: #ea580c;">
+        <div class="step-number" style="background: #ea580c;">5</div>
+        <div class="step-content">
+          <h3>🔗 Match Patient & Donor (Algorithm 3)</h3>
+          <p><strong>Role:</strong> Matching Organizer</p>
+          <p><strong>Action:</strong> Match a compatible patient-donor pair</p>
+          <div class="example-box">
+            <strong>Example:</strong> Patient ID: 1, Donor ID: 100, Click "Match"
+          </div>
+          <a href="matching-organizer.html" class="step-portal">Go to Matching Organizer Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 6: Donation Surgery -->
+      <div class="workflow-step" style="border-left-color: #7c3aed;">
+        <div class="step-number" style="background: #7c3aed;">6</div>
+        <div class="step-content">
+          <h3>⚕️ Donation Surgery (Algorithm 4)</h3>
+          <p><strong>Role:</strong> Donor Surgeon</p>
+          <p><strong>Action:</strong> Perform surgery to retrieve the organ from donor</p>
+          <div class="example-box">
+            <strong>Example:</strong> Select Donor ID: 100 from list, Click "Perform Surgery"
+          </div>
+          <a href="donor-surgeon.html" class="step-portal">Go to Donor Surgeon Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 7: Deliver Organ -->
+      <div class="workflow-step" style="border-left-color: #0891b2;">
+        <div class="step-number" style="background: #0891b2;">7</div>
+        <div class="step-content">
+          <h3>🚚 Deliver Organ (Algorithm 5)</h3>
+          <p><strong>Role:</strong> Transporter</p>
+          <p><strong>Action:</strong> Transport the organ to the transplant center</p>
+          <div class="example-box">
+            <strong>Example:</strong> Select Organ ID from "Ready" list, Click "Deliver"
+          </div>
+          <a href="transporter.html" class="step-portal">Go to Transporter Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 8: Confirm Receipt -->
+      <div class="workflow-step" style="border-left-color: #16a34a;">
+        <div class="step-number" style="background: #16a34a;">8</div>
+        <div class="step-content">
+          <h3>📦 Confirm Organ Receipt</h3>
+          <p><strong>Role:</strong> Transplant Team</p>
+          <p><strong>Action:</strong> Confirm that the organ has been received</p>
+          <div class="example-box">
+            <strong>Example:</strong> Organ ID: (auto-generated), Patient ID: 1, Click "Confirm Receipt"
+          </div>
+          <a href="transplant-team.html" class="step-portal">Go to Transplant Team Portal →</a>
+        </div>
+      </div>
+
+      <div class="arrow-down">⬇️</div>
+
+      <!-- Step 9: Transplant Surgery -->
+      <div class="workflow-step" style="border-left-color: #16a34a;">
+        <div class="step-number" style="background: #16a34a;">9</div>
+        <div class="step-content">
+          <h3>🏥 Transplant Surgery (Algorithm 6 - Final Step)</h3>
+          <p><strong>Role:</strong> Transplant Surgeon</p>
+          <p><strong>Action:</strong> Perform the transplant surgery on the patient</p>
+          <div class="example-box">
+            <strong>Example:</strong> Enter Patient ID: 1, Click "Complete Surgery"
+          </div>
+          <a href="transplant-surgeon.html" class="step-portal">Go to Transplant Surgeon Portal →</a>
+        </div>
+      </div>
+
+      <div class="complete-badge">
+        🎉 WORKFLOW COMPLETE! 🎉
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Important Notes</h2>
+      <ul style="line-height: 2;">
+        <li>✅ <strong>Always connect MetaMask</strong> before performing any action</li>
+        <li>✅ <strong>Follow the sequence</strong> - Each step depends on the previous steps</li>
+        <li>✅ <strong>Check activity logs</strong> - Each portal shows transaction status in the activity log</li>
+        <li>✅ <strong>Use unique IDs</strong> - Patient IDs (1-999), Donor IDs (100-9999)</li>
+        <li>✅ <strong>Wait for confirmations</strong> - Let each transaction complete before moving to next step</li>
+        <li>✅ <strong>Refresh lists</strong> - Click "Refresh List" buttons to see updated waiting lists</li>
+        <li>⚠️ <strong>No duplicates</strong> - Each surgery/delivery/transplant can only be done once</li>
+        <li>⚠️ <strong>Match compatibility</strong> - Ensure organ types match between patient and donor</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Test the Complete Workflow</h2>
+      <p><strong>Quick Test Scenario:</strong></p>
+      <ol style="line-height: 2;">
+        <li>Go to Admin → Grant all roles to your account</li>
+        <li>Go to Doctor → Add Patient (ID: 2, Age: 50, Organ: Kidney)</li>
+        <li>Go to Transplant Team → Verify Patient (ID: 2)</li>
+        <li>Go to Doctor → Add Donor (ID: 200, Age: 35, Organ: Kidney, Blood: A+)</li>
+        <li>Go to Procurement Team → Verify Donor (ID: 200)</li>
+        <li>Go to Matching Organizer → Match (Patient: 2, Donor: 200)</li>
+        <li>Go to Donor Surgeon → Perform Surgery (Donor: 200)</li>
+        <li>Go to Transporter → Deliver Organ</li>
+        <li>Go to Transplant Team → Confirm Receipt</li>
+        <li>Go to Transplant Surgeon → Complete Transplant (Patient: 2)</li>
+      </ol>
+      <p style="margin-top: 15px; padding: 15px; background: #d1fae5; border-radius: 6px; border-left: 4px solid #16a34a;">
+        ✅ <strong>Success!</strong> You've completed the entire blockchain-based organ donation workflow!
+      </p>
+    </div>
+  </div>
+</body>
+</html>
