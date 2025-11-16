@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blockchain-Based Allograft Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .landing-hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .landing-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>');
+      opacity: 0.3;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-content h1 {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .hero-content .subtitle {
+      font-size: 24px;
+      margin-bottom: 30px;
+      opacity: 0.95;
+      font-weight: 300;
+    }
+
+    .hero-content .tagline {
+      font-size: 18px;
+      margin-bottom: 40px;
+      opacity: 0.9;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 48px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 20px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      background: #f0f0f0;
+    }
+
+    .features-section {
+      padding: 80px 20px;
+      background: white;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+    }
+
+    .feature-card {
+      background: #f9fafb;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-color: #667eea;
+    }
+
+    .feature-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 24px;
+      color: #2d3748;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      color: #4a5568;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .importance-section {
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    }
+
+    .importance-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .importance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .importance-item {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      border-left: 5px solid #667eea;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .importance-item h4 {
+      font-size: 20px;
+      color: #667eea;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .importance-item p {
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    .tech-section {
+      padding: 80px 20px;
+      background: #2d3748;
+      color: white;
+    }
+
+    .tech-grid {
+      max-width: 1000px;
+      margin: 40px auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .tech-item {
+      text-align: center;
+      padding: 30px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .tech-item:hover {
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.05);
+    }
+
+    .tech-item .tech-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .tech-item h4 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .tech-item p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .workflow-section {
+      padding: 80px 20px;
+      background: white;
+    }
+
+    .workflow-steps {
+      max-width: 800px;
+      margin: 40px auto 0;
+    }
+
+    .workflow-step {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      padding: 25px;
+      background: #f9fafb;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .workflow-step:hover {
+      background: #f0f4f8;
+      transform: translateX(10px);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-right: 25px;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 20px;
+      color: #2d3748;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .step-content p {
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    .final-cta {
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      text-align: center;
+      color: white;
+    }
+
+    .final-cta h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .final-cta p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.95;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+      }
+      40% {
+        transform: translateX(-50%) translateY(-20px);
+      }
+      60% {
+        transform: translateX(-50%) translateY(-10px);
+      }
+    }
+
+    .scroll-indicator span {
+      display: block;
+      width: 30px;
+      height: 50px;
+      border: 2px solid white;
+      border-radius: 25px;
+      position: relative;
+    }
+
+    .scroll-indicator span::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: scroll 2s infinite;
+    }
+
+    @keyframes scroll {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 38px;
+      }
+      .hero-content .subtitle {
+        font-size: 20px;
+      }
+      .section-title {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="landing-hero">
+    <div class="hero-content">
+      <h1>🏥 Blockchain-Based<br>Allograft Management</h1>
+      <p class="subtitle">Revolutionizing Organ Donation with Transparency & Trust</p>
+      <p class="tagline">
+        A decentralized platform ensuring complete traceability, accountability, and security 
+        in the organ donation and transplantation process using blockchain technology.
+      </p>
+      <a href="index.html" class="cta-button">Enter Application →</a>
+    </div>
+    <div class="scroll-indicator">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2 class="section-title">Core Features</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Immutable Records</h3>
+        <p>All patient, donor, and transaction data is permanently recorded on the blockchain, ensuring tamper-proof medical records and complete audit trails.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>End-to-End Tracking</h3>
+        <p>Track every step from patient registration to successful transplantation. Every action is logged with timestamps and responsible parties.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Role-Based Access</h3>
+        <p>Seven distinct roles (Doctor, Transplant Team, Procurement Team, etc.) ensure only authorized personnel perform specific medical actions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h3>Smart Matching</h3>
+        <p>Automated compatibility algorithms match patients with donors based on blood type, organ type, age, BMI, and other critical medical criteria.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Real-Time Updates</h3>
+        <p>Instant notifications and status updates across all stakeholders ensure timely decision-making in time-critical organ transplant scenarios.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Decentralized Trust</h3>
+        <p>No single point of failure or control. The system operates on a distributed blockchain network ensuring reliability and transparency.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why It Matters Section -->
+  <section class="importance-section">
+    <div class="importance-content">
+      <h2 class="section-title">Why This Matters</h2>
+      <div class="importance-grid">
+        <div class="importance-item">
+          <h4>🚨 Critical Problem</h4>
+          <p>Every day, patients die waiting for organ transplants due to inefficient allocation, lack of transparency, and coordination failures between medical institutions.</p>
+        </div>
+        <div class="importance-item">
+          <h4>📊 Transparency Gap</h4>
+          <p>Traditional organ donation systems suffer from opacity, making it difficult to track organs, verify authenticity, and prevent fraud or black market activities.</p>
+        </div>
+        <div class="importance-item">
+          <h4>⏱️ Time Sensitivity</h4>
+          <p>Organs have limited preservation time (4-36 hours). Blockchain enables instant verification and coordination, saving precious minutes that save lives.</p>
+        </div>
+        <div class="importance-item">
+          <h4>🔍 Accountability</h4>
+          <p>Every action is traceable to specific medical professionals with timestamps, ensuring accountability and enabling detailed audits for quality assurance.</p>
+        </div>
+        <div class="importance-item">
+          <h4>🌐 Global Standard</h4>
+          <p>Establishes a global, interoperable standard for organ donation management that can be adopted by hospitals and organizations worldwide.</p>
+        </div>
+        <div class="importance-item">
+          <h4>💡 Innovation</h4>
+          <p>Leverages cutting-edge blockchain technology to solve real-world healthcare challenges, paving the way for future medical record management systems.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Stack Section -->
+  <section class="tech-section">
+    <h2 class="section-title">Built with Modern Technology</h2>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-icon">⛓️</div>
+        <h4>Ethereum Blockchain</h4>
+        <p>Decentralized, secure, and immutable ledger</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">📜</div>
+        <h4>Smart Contracts</h4>
+        <p>Solidity 0.8.19 with automated workflows</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🔐</div>
+        <h4>OpenZeppelin</h4>
+        <p>Battle-tested access control libraries</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🦊</div>
+        <h4>MetaMask</h4>
+        <p>Secure wallet integration for authentication</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🌐</div>
+        <h4>Web3.js</h4>
+        <p>Seamless blockchain interaction layer</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🧪</div>
+        <h4>Truffle Suite</h4>
+        <p>Development, testing & deployment framework</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Section -->
+  <section class="workflow-section">
+    <h2 class="section-title">Complete 9-Step Workflow</h2>
+    <div class="workflow-steps">
+      <div class="workflow-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>Patient Registration</h4>
+          <p>Doctor registers patients needing organ transplants with complete medical details</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>Patient Verification</h4>
+          <p>Transplant team verifies medical eligibility and adds patient to waiting list</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>Donor Registration</h4>
+          <p>Doctor registers willing donors with organ donation details</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>Donor Verification</h4>
+          <p>Procurement team verifies donor health and organ viability</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h4>Smart Matching</h4>
+          <p>Automated algorithm matches compatible patient-donor pairs</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h4>Donation Surgery</h4>
+          <p>Donor surgeon retrieves organ and marks it as "Ready"</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">7</div>
+        <div class="step-content">
+          <h4>Organ Transportation</h4>
+          <p>Professional transporters deliver organ to recipient hospital</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">8</div>
+        <div class="step-content">
+          <h4>Receipt Confirmation</h4>
+          <p>Transplant team confirms organ arrival and condition</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-number">9</div>
+        <div class="step-content">
+          <h4>Transplant Surgery</h4>
+          <p>Transplant surgeon performs final surgery - workflow complete!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="final-cta">
+    <h2>Ready to Transform Organ Donation?</h2>
+    <p>Experience the future of transparent, accountable, and efficient organ transplantation</p>
+    <a href="index.html" class="cta-button">Launch Application →</a>
+  </section>
+</body>
+</html>
