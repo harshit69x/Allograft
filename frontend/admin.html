@@ -70,10 +70,10 @@
           </select>
         </div>
         <button class="btn btn-success" id="btnGrantRole">Grant Role</button>
-        <button class="btn btn-warning" id="btnGrantAllToCurrent">Grant All Roles to Current Account</button>
+        <!-- <button class="btn btn-warning" id="btnGrantAllToCurrent">Grant All Roles to Current Account</button> -->
       </div>
 
-      <div class="card">
+      <!-- <div class="card">
         <h2>Check Role</h2>
         <div class="form-group">
           <label>Account Address</label>
@@ -94,9 +94,9 @@
         <button class="btn btn-primary" id="btnCheckRole">Check Role</button>
         <div id="roleResult" style="margin-top:15px;"></div>
       </div>
-    </div>
+    </div> -->
 
-    <div class="card">
+    <!-- <div class="card">
       <h2>View Waiting Lists</h2>
       <button class="btn btn-primary" id="btnViewLists">Refresh Lists</button>
       <div class="grid-2" style="margin-top:20px;">
@@ -109,7 +109,7 @@
           <div id="donorList"></div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="card">
       <h2>System Logs</h2>
@@ -208,68 +208,68 @@
       }
     };
 
-    document.getElementById('btnGrantAllToCurrent').onclick = async () => {
-      if (!currentAccount) {
-        log('Please connect wallet first', 'error');
-        return;
-      }
+    // document.getElementById('btnGrantAllToCurrent').onclick = async () => {
+    //   if (!currentAccount) {
+    //     log('Please connect wallet first', 'error');
+    //     return;
+    //   }
       
-      log(`Checking admin privileges...`, 'info');
+    //   log(`Checking admin privileges...`, 'info');
       
-      // Check if current account has DEFAULT_ADMIN_ROLE
-      const hasAdminRole = await callView('hasRole', ['0x0000000000000000000000000000000000000000000000000000000000000000', currentAccount]);
-      if (!hasAdminRole) {
-        log(`✗ Current account does not have admin privileges!`, 'error');
-        alert(`You need to connect with the admin account that deployed the contract.\n\nExpected admin account: 0x63b7acCBeE71A6a026A0BdC3a0734D74384eD15C\n\nCurrent account: ${currentAccount}`);
-        return;
-      }
+    //   // Check if current account has DEFAULT_ADMIN_ROLE
+    //   const hasAdminRole = await callView('hasRole', ['0x0000000000000000000000000000000000000000000000000000000000000000', currentAccount]);
+    //   if (!hasAdminRole) {
+    //     log(`✗ Current account does not have admin privileges!`, 'error');
+    //     alert(`You need to connect with the admin account that deployed the contract.\n\nExpected admin account: 0x63b7acCBeE71A6a026A0BdC3a0734D74384eD15C\n\nCurrent account: ${currentAccount}`);
+    //     return;
+    //   }
       
-      log(`Granting all roles to ${currentAccount}...`, 'info');
+    //   log(`Granting all roles to ${currentAccount}...`, 'info');
       
-      const roles = Object.values(ROLES);
-      let successCount = 0;
+    //   const roles = Object.values(ROLES);
+    //   let successCount = 0;
       
-      for (const role of roles) {
-        try {
-          const result = await sendTransaction('grantRole', [role, currentAccount]);
-          if (result) {
-            successCount++;
-            log(`✓ Granted role ${Object.keys(ROLES)[roles.indexOf(role)]}`, 'success');
-          }
-        } catch (error) {
-          log(`✗ Failed to grant role ${Object.keys(ROLES)[roles.indexOf(role)]}: ${error.message}`, 'error');
-        }
-      }
+    //   for (const role of roles) {
+    //     try {
+    //       const result = await sendTransaction('grantRole', [role, currentAccount]);
+    //       if (result) {
+    //         successCount++;
+    //         log(`✓ Granted role ${Object.keys(ROLES)[roles.indexOf(role)]}`, 'success');
+    //       }
+    //     } catch (error) {
+    //       log(`✗ Failed to grant role ${Object.keys(ROLES)[roles.indexOf(role)]}: ${error.message}`, 'error');
+    //     }
+    //   }
       
-      if (successCount === roles.length) {
-        log(`🎉 All ${successCount} roles granted successfully to current account!`, 'success');
-        alert(`All ${successCount} roles have been granted to your current account!\n\nYou can now use all portals.`);
-      } else {
-        log(`⚠ Only ${successCount}/${roles.length} roles granted successfully`, 'warning');
-      }
-    };
+    //   if (successCount === roles.length) {
+    //     log(`🎉 All ${successCount} roles granted successfully to current account!`, 'success');
+    //     alert(`All ${successCount} roles have been granted to your current account!\n\nYou can now use all portals.`);
+    //   } else {
+    //     log(`⚠ Only ${successCount}/${roles.length} roles granted successfully`, 'warning');
+    //   }
+    // };
 
-    document.getElementById('btnViewLists').onclick = async () => {
-      const lists = await callView('getWaitingLists');
-      if (!lists) return;
+    // document.getElementById('btnViewLists').onclick = async () => {
+    //   const lists = await callView('getWaitingLists');
+    //   if (!lists) return;
       
-      const patientList = document.getElementById('patientList');
-      const donorList = document.getElementById('donorList');
+    //   const patientList = document.getElementById('patientList');
+    //   const donorList = document.getElementById('donorList');
       
-      if (lists[0].length === 0) {
-        patientList.innerHTML = '<p class="alert alert-info">No patients in waiting list</p>';
-      } else {
-        patientList.innerHTML = '<ul>' + lists[0].map(id => `<li>Patient ID: ${id}</li>`).join('') + '</ul>';
-      }
+    //   if (lists[0].length === 0) {
+    //     patientList.innerHTML = '<p class="alert alert-info">No patients in waiting list</p>';
+    //   } else {
+    //     patientList.innerHTML = '<ul>' + lists[0].map(id => `<li>Patient ID: ${id}</li>`).join('') + '</ul>';
+    //   }
       
-      if (lists[1].length === 0) {
-        donorList.innerHTML = '<p class="alert alert-info">No donors in waiting list</p>';
-      } else {
-        donorList.innerHTML = '<ul>' + lists[1].map(id => `<li>Donor ID: ${id}</li>`).join('') + '</ul>';
-      }
+    //   if (lists[1].length === 0) {
+    //     donorList.innerHTML = '<p class="alert alert-info">No donors in waiting list</p>';
+    //   } else {
+    //     donorList.innerHTML = '<ul>' + lists[1].map(id => `<li>Donor ID: ${id}</li>`).join('') + '</ul>';
+    //   }
       
-      log('Waiting lists refreshed', 'success');
-    };
+    //   log('Waiting lists refreshed', 'success');
+    // };
 
     // Override the connectWallet function to add admin status check
     const originalConnectWallet = window.connectWallet;
